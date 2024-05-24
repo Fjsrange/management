@@ -1,7 +1,10 @@
 # management
 
+### 新域名
+tech.wolfcode.cn
+
 ### 技术栈
-vue2 + javascript + vuex + vue-router + elementUi + axios + sass
+vue2 + javascript + vuex(3.6.2) + vue-router(3.5.1) + elementUi(2.15.14) + axios(1.7.2) + less-loader(12.2.0)
 
 ### 准备工作
 清除样式

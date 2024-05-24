@@ -12,7 +12,7 @@
         <el-form-item label="验证码" prop="captchaCode">
           <div class="captcha-box">
             <el-input type="text" v-model="ruleForm.captchaCode"></el-input>
-            <img height="40" width="100px" src="../../assets/logo.png" alt="">
+            <img height="40" :src="captchaSrc" @click="getCaptchaCode">
           </div>
 
         </el-form-item>
@@ -25,18 +25,21 @@
 </template>
 
 <script>
-import { validateUsername } from '@/utils/validate';
+import { validateUsername } from '@/utils/validate'
+import { getCaptchaCode } from '@/api/index'
 
 export default {
-  name: 'Login',
+  name: 'userLogin',
   components: {},
-  data() {
+  data () {
     return {
       ruleForm: {
         username: '',
         password: '',
-        captchaCode: '88888888',
+        captchaCode: '88888888'
       },
+      captchaSrc: 'data:image/gif;base64,', // 验证码图片
+      uuid: '', // 验证码uuid
       rules: {
         username: [
           // required: 是否必填，message： 提示语，trigger： 触发方式
@@ -48,27 +51,47 @@ export default {
           { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
         captchaCode: [
-          { required: true, message: '请输入验证码', trigger: 'blur' },
-        ],
+          { required: true, message: '请输入验证码', trigger: 'blur' }
+        ]
       }
     }
   },
+  created () {
+    this.getCaptchaCode() // 进入页面获取验证码
+  },
   methods: {
+    // 获取验证码
+    async getCaptchaCode () {
+      const res = await getCaptchaCode()
+      if (res.code === 200) {
+        this.captchaSrc = this.captchaSrc + res.img
+        this.uuid = res.uuid
+      }
+
+      /* axios.get('http://tech.wolfcode.cn:23683/prod-api/captchaImage').then(res => {
+        console.log(res);
+        if (res.data.code == 200)
+          this.captchaSrc = this.captchaSrc + res.data.img;
+        this.uuid = res.data.uuid;
+      }) */
+    },
 
     // 提交
-    submitForm() {
-      console.log('提交', this.ruleForm);
-      this.$refs.ruleForm.validate((valid) => {
-        console.log(valid);
+    submitForm () {
+      console.log('提交', this.ruleForm)
+      this.$refs.ruleForm.validate((valid, obj) => {
+        console.log(valid, obj)
         if (valid) {
-          console.log('true');
-
+          // 通过校验，发起登录请求
+          // 登录成功后，跳转到首页
+          console.log('true')
+        } else {
+          this.$message.error('请输入正确的信息吼在提交')
+          return false
         }
-
       })
-
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -83,10 +106,10 @@ export default {
   .login-box {
     width: 400px;
     background: #fff;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    // position: absolute;
+    // left: 50%;
+    // top: 50%;
+    // transform: translate(-50%, -50%);
     border-radius: 10px;
     padding-top: 20px;
     padding-right: 40px;
