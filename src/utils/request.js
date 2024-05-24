@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Message } from 'element-ui'
 
 const instance = axios.create({
   baseURL: 'http://tech.wolfcode.cn:23683',
@@ -21,7 +22,12 @@ instance.interceptors.response.use(
     const resData = res.data
     // 如果返回的状态码不是200，就抛出错误并返回，提升性能
     if (resData.code !== 200) {
-      this.$message.error(resData.msg)
+      Message({
+        message: resData.msg || '系统错误',
+        type: 'error',
+        duration: 1.5 * 1000
+      })
+      // Message.error(resData.msg);
       return false
     }
     return resData

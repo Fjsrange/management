@@ -88,10 +88,11 @@ export default {
           }
           const res = await login(data)
           if (res === false) return
-
+          // 清除uuid
+          localStorage.removeItem('uuid')
           // 登录成功，保存token
           localStorage.setItem('token', res.token)
-          // // 跳转到首页
+          // 跳转到首页
           this.$router.push('/')
           this.$message.success('登录成功')
         } else {

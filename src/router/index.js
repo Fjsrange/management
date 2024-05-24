@@ -1,14 +1,13 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'mainLayout',
+    component: () => import('@/views/layout/mainLayout')
   },
   {
     path: '/about',
@@ -30,6 +29,23 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+// 全局前置守卫
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token')
+  // 管理系统常见的两个逻辑
+  // 1、如果用户访问登陆页面，但是token已存在，跳转到首页
+  if (token && to.path === '/login') {
+    next('/')
+    return
+  }
+  // 2、如果用户访问其他页面，但是token不存在，跳转到登陆页面
+  if (!token && to.path !== '/login') {
+    next('/login')
+    return
+  }
+  next()
 })
 
 export default router
