@@ -18,7 +18,13 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   (res) => {
-    return res.data
+    const resData = res.data
+    // 如果返回的状态码不是200，就抛出错误并返回，提升性能
+    if (resData.code !== 200) {
+      this.$message.error(resData.msg)
+      return false
+    }
+    return resData
   },
   (err) => {
     return Promise.reject(err)

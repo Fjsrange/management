@@ -37,7 +37,7 @@ export default {
         password: '123456',
         code: '888888'
       },
-      captchaSrc: 'data:image/gif;base64,', // 验证码图片
+      captchaSrc: '', // 验证码图片
       uuid: '', // 验证码uuid
       rules: {
         username: [
@@ -62,13 +62,11 @@ export default {
     // 获取验证码
     async getCaptchaCode () {
       const res = await getCaptchaCode()
-      if (res.code === 200) {
-        this.captchaSrc = this.captchaSrc + res.img
-        this.uuid = res.uuid // 用于判断登陆时是否过期
-        localStorage.setItem('uuid', res.uuid)
-      } else {
-        this.$message.error(res.msg)
-      }
+      if (res === false) return // 请求失败，直接返回
+
+      this.captchaSrc = 'data:image/gif;base64,' + res.img
+      this.uuid = res.uuid // 用于判断登陆时是否过期
+      localStorage.setItem('uuid', res.uuid)
 
       /* axios.get('http://tech.wolfcode.cn:23683/prod-api/captchaImage').then(res => {
         console.log(res);
@@ -89,15 +87,13 @@ export default {
             uuid: this.uuid
           }
           const res = await login(data)
-          if (res.code === 200) {
-            // 登录成功，保存token
-            localStorage.setItem('token', res.token)
-            // // 跳转到首页
-            this.$router.push('/')
-            this.$message.success('登录成功')
-          } else {
-            this.$message.error(res.msg)
-          }
+          if (res === false) return
+
+          // 登录成功，保存token
+          localStorage.setItem('token', res.token)
+          // // 跳转到首页
+          this.$router.push('/')
+          this.$message.success('登录成功')
         } else {
           this.$message.error('请输入正确的信息后在提交')
           return false
