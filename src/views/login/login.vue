@@ -9,9 +9,9 @@
         <el-form-item :label="'密\xa0\xa0\xa0\xa0码'" prop="password">
           <el-input type="password" v-model="ruleForm.password"></el-input>
         </el-form-item>
-        <el-form-item label="验证码" prop="captchaCode">
+        <el-form-item label="验证码" prop="code">
           <div class="captcha-box">
-            <el-input type="text" v-model="ruleForm.captchaCode"></el-input>
+            <el-input type="text" v-model="ruleForm.code"></el-input>
             <img height="40" :src="captchaSrc" @click="getCaptchaCode">
           </div>
 
@@ -26,17 +26,16 @@
 
 <script>
 import { validateUsername } from '@/utils/validate'
-import { getCaptchaCode } from '@/api/index'
+import { getCaptchaCode, login } from '@/api/index'
 
 export default {
   name: 'userLogin',
-  components: {},
   data () {
     return {
       ruleForm: {
-        username: '',
-        password: '',
-        captchaCode: '88888888'
+        username: 'qdtest1',
+        password: '123456',
+        code: '888888'
       },
       captchaSrc: 'data:image/gif;base64,', // 验证码图片
       uuid: '', // 验证码uuid
@@ -50,7 +49,7 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
-        captchaCode: [
+        code: [
           { required: true, message: '请输入验证码', trigger: 'blur' }
         ]
       }
@@ -65,7 +64,10 @@ export default {
       const res = await getCaptchaCode()
       if (res.code === 200) {
         this.captchaSrc = this.captchaSrc + res.img
-        this.uuid = res.uuid
+        this.uuid = res.uuid // 用于判断登陆时是否过期
+        localStorage.setItem('uuid', res.uuid)
+      } else {
+        this.$message.error(res.msg)
       }
 
       /* axios.get('http://tech.wolfcode.cn:23683/prod-api/captchaImage').then(res => {
@@ -79,14 +81,25 @@ export default {
     // 提交
     submitForm () {
       console.log('提交', this.ruleForm)
-      this.$refs.ruleForm.validate((valid, obj) => {
-        console.log(valid, obj)
+      this.$refs.ruleForm.validate(async (valid, obj) => {
         if (valid) {
           // 通过校验，发起登录请求
-          // 登录成功后，跳转到首页
-          console.log('true')
+          const data = {
+            ...this.ruleForm,
+            uuid: this.uuid
+          }
+          const res = await login(data)
+          if (res.code === 200) {
+            // 登录成功，保存token
+            localStorage.setItem('token', res.token)
+            // // 跳转到首页
+            this.$router.push('/')
+            this.$message.success('登录成功')
+          } else {
+            this.$message.error(res.msg)
+          }
         } else {
-          this.$message.error('请输入正确的信息吼在提交')
+          this.$message.error('请输入正确的信息后在提交')
           return false
         }
       })
@@ -106,10 +119,10 @@ export default {
   .login-box {
     width: 400px;
     background: #fff;
-    // position: absolute;
-    // left: 50%;
-    // top: 50%;
-    // transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     border-radius: 10px;
     padding-top: 20px;
     padding-right: 40px;
