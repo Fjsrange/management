@@ -1,11 +1,15 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import getters from "./getters";
+import Vue from 'vue'
+import Vuex from 'vuex'
+import getters from './getters'
+import navCollapse from './modules/navCollapse'
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 const store = new Vuex.Store({
-  getters,
-});
+  modules: {
+    navCollapse
+  },
+  getters
+})
 
-export default store;
+export default store
