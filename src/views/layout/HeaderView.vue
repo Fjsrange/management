@@ -3,10 +3,7 @@
     <!-- <i class="el-icon-s-fold" v-if="isCollapse"></i>
     <i class="el-icon-s-unfold" v-else></i> -->
     <div class="header-left">
-      <el-button
-        :class="isCollapse ? 'el-icon-s-fold' : 'el-icon-s-unfold'"
-        @click="changeCollapse"
-      ></el-button>
+      <el-button :class="isCollapse ? 'el-icon-s-unfold' : 'el-icon-s-fold'" @click="changeCollapse"></el-button>
     </div>
     <div class="header-right">HeaderView</div>
   </div>
@@ -18,7 +15,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'HeaderView',
   components: {},
-  data () {
+  data() {
     return {
       // isCollapse: true,
     }
@@ -28,7 +25,7 @@ export default {
   },
   methods: {
     // 是否展示侧边栏
-    changeCollapse () {
+    changeCollapse() {
       console.log('thi', this.$store)
       this.$store.dispatch('navCollapse/changeIsCollapse')
       // this.$store.dispatch("changeCollapse");
@@ -46,6 +43,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   .header-left {
     display: flex;
     align-items: center;
@@ -57,15 +55,18 @@ export default {
       padding: 12px 10px;
     }
   }
+
   .header-right {
     display: flex;
     align-items: center;
   }
 }
+
 .el-icon-s-fold {
   font-size: 20px;
   cursor: pointer;
 }
+
 .el-icon-s-unfold {
   font-size: 20px;
   cursor: pointer;

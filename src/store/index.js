@@ -1,15 +1,17 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import getters from './getters'
-import navCollapse from './modules/navCollapse'
+import Vue from "vue";
+import Vuex from "vuex";
+import getters from "./getters";
+import navCollapse from "./modules/navCollapse";
+import userMenu from "./modules/userMenu";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
   modules: {
-    navCollapse
+    navCollapse,
+    userMenu,
   },
-  getters
-})
+  getters,
+});
 
-export default store
+export default store;
